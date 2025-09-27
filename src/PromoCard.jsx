@@ -1,5 +1,5 @@
 import RestaurantCard from "./RestaurantCard";
-import PromotedLabel from "./Promotedlabel";
+import PromotedLabel from "./PromotedLabel";
 const PromoCard = ({ data }) => (
   <div className="relative">
     <PromotedLabel />
