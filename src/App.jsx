@@ -8,7 +8,6 @@ import { Contact } from "./Contact";
 import ErrorPage from "./Error";
 import { Restaurnatmenu } from "./Restaurnatmenu";
 import { Cart } from "./Cart";
-import { Login } from './Login'
 import UserContext from "./Usercontext";
 
 const Grocery = lazy(() => import("./utils/Grocery"));
