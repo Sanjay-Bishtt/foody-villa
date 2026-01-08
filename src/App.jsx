@@ -18,7 +18,7 @@ function AppWrapper() {
   const router = createBrowserRouter([
     
     {
-      path: "/", // Authenticated routes
+      path: "/", 
       element: <Applayout />,
       errorElement: <ErrorPage />,
       children: [

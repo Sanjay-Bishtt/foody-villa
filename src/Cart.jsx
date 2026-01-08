@@ -1,111 +1,107 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { FaShoppingCart } from 'react-icons/fa'; 
-import { clearcard, removeitem } from './utils/Cartslice'; // import removeitem action
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { FaShoppingCart } from "react-icons/fa";
+import { clearcard, removeitem } from "./utils/Cartslice";
 
 export const Cart = () => {
   const [isOpen, setIsOpen] = useState(false);
   const cartitems = useSelector((store) => store.cart.items);
   const dispatch = useDispatch();
 
-  // Calculate total price
   const totalPrice = cartitems.reduce((acc, item) => {
-    const price = item.card?.info?.price ?? item.price ?? item.defaultPrice ?? 0;
+    const price =
+      item.card?.info?.price ??
+      item.price ??
+      item.defaultPrice ??
+      0;
     return acc + price;
   }, 0);
 
-  const toggleCart = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleClearCart = () => {
-    dispatch(clearcard());
-  };
-
-  // New function to remove individual item
-  const handleRemoveItem = (id) => {
-    dispatch(removeitem(id));
-  };
+  const toggleCart = () => setIsOpen(!isOpen);
+  const handleClearCart = () => dispatch(clearcard());
+  const handleRemoveItem = (id) => dispatch(removeitem(id));
 
   return (
-    <div className="max-w-md mx-auto my-6">
-      {/* Cart Header */}
+    <div className="max-w-lg lg:max-w-xl mx-auto my-6 px-3 sm:px-0">
+      {/* CART HEADER */}
       <button
         onClick={toggleCart}
-        className="flex items-center justify-center w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold px-4 py-3 rounded-md shadow-md focus:outline-none transition"
-        aria-expanded={isOpen}
-        aria-controls="cart-content"
+        className="flex items-center w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold px-4 py-3 rounded-md shadow transition"
       >
         <FaShoppingCart className="mr-2" />
         <span>Cart ({cartitems.length})</span>
-        <span className="ml-auto text-xl">{isOpen ? '▲' : '▼'}</span>
+        <span className="ml-auto">{isOpen ? "▲" : "▼"}</span>
       </button>
 
-      {/* Cart Content */}
+      {/* CART BODY */}
       {isOpen && (
-        <div
-          id="cart-content"
-          className="mt-4 bg-white rounded-md shadow-md border border-gray-300 overflow-hidden"
-        >
+        <div className="mt-4 bg-white rounded-md shadow border overflow-hidden">
           {cartitems.length === 0 ? (
-            <p className="p-6 text-center text-gray-500 italic">Your cart is empty.</p>
+            <p className="p-6 text-center text-gray-500 italic">
+              Your cart is empty
+            </p>
           ) : (
             <>
-              {/* Scrollable items list */}
-              <div className="max-h-72 overflow-y-auto divide-y divide-gray-200">
+              {/* ITEMS LIST */}
+              <div className="max-h-80 overflow-y-auto divide-y">
                 {cartitems.map((item, index) => {
                   const info = item.card?.info || item;
-                  const price = info.price ?? info.defaultPrice ?? 0;
+                  const price =
+                    info.price ?? info.defaultPrice ?? 0;
 
                   return (
                     <div
                       key={info.id || index}
-                      className="flex items-center p-4 space-x-4"
+                      className="flex flex-col sm:flex-row gap-4 p-4"
                     >
-                      {/* Image */}
+                      {/* IMAGE */}
                       {info.imageId ? (
                         <img
                           src={`https://media-assets.swiggy.com/swiggy/image/upload/${info.imageId}`}
                           alt={info.name}
-                          className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+                          className="w-full sm:w-16 h-40 sm:h-16 object-cover rounded"
                         />
                       ) : (
-                        <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">
+                        <div className="w-full sm:w-16 h-40 sm:h-16 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">
                           No Image
                         </div>
                       )}
 
-                      {/* Info */}
-                      <div className="flex-grow">
-                        <h3 className="font-semibold text-gray-800">{info.name}</h3>
+                      {/* INFO */}
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
+                          {info.name}
+                        </h3>
+
                         {info.description && (
-                          <p className="text-gray-500 text-sm">{info.description}</p>
+                          <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">
+                            {info.description}
+                          </p>
                         )}
-                        <p className="text-pink-600 font-semibold mt-1">
-                          ₹{(price / 100).toFixed(2)}
-                        </p>
+
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-pink-600 font-semibold">
+                            ₹{(price / 100).toFixed(2)}
+                          </span>
+
+                          <button
+                            onClick={() => handleRemoveItem(info.id)}
+                            className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
-
-                      {/* Quantity (Assuming 1) */}
-                      <div className="text-gray-600 font-medium">x1</div>
-
-                      {/* Remove button */}
-                      <button
-                        onClick={() => handleRemoveItem(info.id)}
-                        className="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm"
-                      >
-                        Remove
-                      </button>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Total, Clear Cart & Checkout Buttons */}
-              <div className="border-t border-gray-200 p-4 flex flex-col gap-3">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">Total:</span>
-                  <span className="text-pink-600 font-bold text-lg">
+              {/* FOOTER */}
+              <div className="border-t p-4 space-y-3">
+                <div className="flex justify-between font-semibold text-lg">
+                  <span>Total</span>
+                  <span className="text-pink-600">
                     ₹{(totalPrice / 100).toFixed(2)}
                   </span>
                 </div>
@@ -113,14 +109,14 @@ export const Cart = () => {
                 <button
                   onClick={handleClearCart}
                   disabled={cartitems.length === 0}
-                  className="w-full bg-red-600 text-white font-semibold py-3 rounded-md hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-red-600 text-white py-3 rounded hover:bg-red-700 disabled:opacity-50"
                 >
                   Clear Cart
                 </button>
 
                 <button
                   disabled={cartitems.length === 0}
-                  className="w-full bg-pink-600 text-white font-semibold py-3 rounded-md hover:bg-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-pink-600 text-white py-3 rounded hover:bg-pink-700 disabled:opacity-50"
                 >
                   Proceed to Checkout
                 </button>
